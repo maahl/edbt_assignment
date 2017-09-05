@@ -1,7 +1,7 @@
 EXEC     = detect_duplicates
 CC       = gcc
 
-CFLAGS   = -std=gnu11 -O3 -Wall -Wextra -Wpedantic -Wstrict-aliasing
+CFLAGS   = -std=gnu11 -Og -g -Wall -Wextra -Wpedantic -Wstrict-aliasing
 
 SRC      = $(wildcard *.c)
 OBJ      = $(SRC:.c=.o)
