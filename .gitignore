@@ -1,2 +1,3 @@
 *.o
 detect_duplicates
+valgrind.log
