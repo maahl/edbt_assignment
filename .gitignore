@@ -1,3 +1,4 @@
 *.o
-detect_duplicates
+detect_duplicates.so
 valgrind.log
+__pycache__

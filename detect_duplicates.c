@@ -1,9 +1,8 @@
-#include "csv.h"
-#include "string.h"
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-typedef struct csv_parser csv_parser;
-
-const char DATASET_FILE[] = "restaurant_dataset.csv";
 
 typedef struct restaurant_t {
     char name[256];
@@ -13,90 +12,54 @@ typedef struct restaurant_t {
     int id;
 } restaurant_t;
 
-void print_restaurant(restaurant_t restaurant) {
-    printf("NAME: %s ; ADDRESS: %s ; CITY: %s ; TYPE: %s ; ID: %d\n", restaurant.name, restaurant.address, restaurant.city, restaurant.type, restaurant.id);
-}
 
-void init_restaurant(void * parsed_data, size_t num_bytes, void * data) {
-    // silence the compiler warning about this useless argument
-    // note: it is useless because the parsed string is null terminated
-    (void) num_bytes;
+typedef struct duplicate_t {
+    int id;
+    int parent_id; // by convention, the restaurant with the lowest id is the parent
+} duplicate_t;
 
-    static int current_field_id = 0;
-    restaurant_t * restaurant = (restaurant_t *) data;
 
-    switch(current_field_id) {
-        case 0:
-            // initialize the restaurant's name
-            strcpy(restaurant->name, parsed_data);
-            restaurant->address[0] = '\0';
-            restaurant->city[0] = '\0';
-            restaurant->type[0] = '\0';
-            restaurant->id = 0;
-            break;
-        case 1:
-            // initialize the restaurant's address
-            strcpy(restaurant->address, parsed_data);
-            break;
-        case 2:
-            // initialize the restaurant's city
-            strcpy(restaurant->city, parsed_data);
-            break;
-        case 3:
-            // initialize the restaurant's type
-            strcpy(restaurant->type, parsed_data);
-            break;
-        case 4: ; // fix for weird C behaviour, see https://stackoverflow.com/a/18496437/2451259
-            // initialize the restaurant's id
-            // we first need to remove the quotes around the id (who had this idea?)
+typedef struct duplicates_t {
+    duplicate_t duplicates[863];
+    int num_duplicates;
+} duplicates_t;
 
-            // this removes the first quote
-            char* id = (char*) parsed_data + 1;
-            // this finds the index of the second quote and replaces it with \0
-            *(strchr(id, '\'')) = '\0';
 
-            restaurant->id = atoi(id);
-            break;
-        default:
-            // this should never happen
-            exit(EXIT_FAILURE);
+// From a list of restaurants, return the list of duplicates
+duplicates_t naive_implementation(restaurant_t * restaurants, int num_restaurants) {
+    // TODO
+
+    // print the input
+    for(int i=0; i<num_restaurants; i++) {
+        printf(
+            "NAME: %s ; ADDRESS: %s ; CITY: %s ; TYPE: %s ; ID: %d\n", 
+            restaurants[i].name,
+            restaurants[i].address,
+            restaurants[i].city,
+            restaurants[i].type,
+            restaurants[i].id
+        );
     }
 
-    current_field_id = (current_field_id + 1) % 5;
+    // generate a dummy list of duplicates
+    //duplicates_t * duplicates = malloc(sizeof(duplicates_t));
+    //duplicates->duplicates = malloc(sizeof(duplicate_t) * 863);
+    duplicates_t duplicates;
+    duplicates.num_duplicates = 0;
+
+    for(int i=0; i<5; i++) {
+        duplicate_t duplicate;
+        duplicate.id = i * 2;
+        duplicate.parent_id = i * 1;
+
+        duplicates.duplicates[i] = duplicate;
+        duplicates.num_duplicates++;
+    }
+
+    return duplicates;
 }
+
 
 int main() {
-    csv_parser p;
-    // initialize the csv parser
-    if (csv_init(&p, CSV_STRICT | CSV_APPEND_NULL) != 0) {
-        fprintf(stderr, "Failed to initialize csv parser\n");
-        exit(EXIT_FAILURE);
-    }
-    csv_set_delim(&p, ';');
-
-    restaurant_t restaurants[863];
-
-    size_t buffer_size = 1024;
-    char* buffer;;
-    size_t bytes_read;
-    int i = 0;
-    FILE *fp = fopen(DATASET_FILE, "rb");
-
-    // initialize the list of restaurants
-    while((bytes_read = getline(&buffer, &buffer_size, fp)) > 0) {
-        csv_parse(&p, &buffer, bytes_read, &init_restaurant, NULL, (void *) &(restaurants[i]));
-
-        printf("ORIGINAL DATA:  %s", buffer);
-        printf("PARSED DATA:    ");
-        print_restaurant(restaurants[i]);
-        printf("--\n");
-        i++;
-    }
-
-    fclose(fp);
-
-    // deinit the csv parser
-    csv_fini(&p, NULL, NULL, NULL);
-
     return 0;
 }
