@@ -1,5 +1,4 @@
 import ctypes
-from ctypes import *
 import os
 
 
@@ -42,17 +41,23 @@ class _Duplicates(ctypes.Structure):
 # library functions declaration
 lib_path = os.path.join(os.path.dirname(os.path.realpath(os.path.abspath(__file__))), 'detect_duplicates.so')
 _detect_duplicates = ctypes.CDLL(lib_path)
-_detect_duplicates.naive_implementation.argtypes = [
-    ctypes.POINTER(_Restaurant), 
-    ctypes.c_int
-]
-_detect_duplicates.naive_implementation.restype = _Duplicates
+
+DUPLICATION_DETECTION_FUNCTIONS = {
+    'naive': _detect_duplicates.naive_implementation,
+}
+
+for f in DUPLICATION_DETECTION_FUNCTIONS.values():
+    f.argtypes = [
+        ctypes.POINTER(_Restaurant),
+        ctypes.c_int
+    ]
+    f.restype = _Duplicates
 
 
-# wrapper for naive_implementation
-def naive_implementation(restaurants):
-    global _naive_implementation
-
+def duplicates_detection(method, restaurants):
+    '''
+    Generic wrapper for all duplication detection methods implemented
+    '''
     restaurants_array = (_Restaurant * len(restaurants))()
     for i in range(len(restaurants)):
         r = restaurants[i]
@@ -64,7 +69,7 @@ def naive_implementation(restaurants):
             r.restaurant_id,
         )
 
-    result = _detect_duplicates.naive_implementation(
+    result = DUPLICATION_DETECTION_FUNCTIONS[method](
         ctypes.cast(restaurants_array, ctypes.POINTER(_Restaurant)),
         ctypes.c_int(len(restaurants))
     )

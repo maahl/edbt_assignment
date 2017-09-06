@@ -4,7 +4,48 @@ import csv
 import detect_duplicates_wrapper as dedup
 from detect_duplicates_wrapper import Restaurant
 
+
 DATASET_FILE = 'restaurant_dataset.csv'
+
+
+def true_positives(duplicates, actual_duplicates):
+    return 1 # TODO
+
+
+def false_negatives(duplicates, actual_duplicates):
+    return 1 # TODO
+
+def false_positives(duplicates, actual_duplicates):
+    return 1 # TODO
+
+
+def recall(duplicates, actual_duplicates):
+    return 1 # TODO
+
+
+def precision(duplicates, actual_duplicates):
+    return 1 # TODO
+
+
+def f_measure(duplicates, actual_duplicates):
+    r = recall(duplicates, actual_duplicates)
+    p = precision(duplicates, actual_duplicates)
+
+    return (2 * r * p) / (r + p)
+
+# TODO tmp function
+def get_actual_duplicates(restaurants):
+    seen = []
+    duplicates = []
+    for r in restaurants:
+        if r.restaurant_id not in seen:
+            seen.append(r.restaurant_id)
+        else:
+            duplicates.append(r.restaurant_id)
+
+    duplicates.sort()
+    return list(set(duplicates))
+
 
 if __name__ == '__main__':
     restaurants = []
@@ -20,5 +61,13 @@ if __name__ == '__main__':
                 int(restaurant[4][1:-1]), # id, removing the quotes
             ))
 
-    dedup.naive_implementation(restaurants)
-    print(len(restaurants))
+    # start by computing the actual duplicates
+    #actual_duplicates = dedup.actual_duplicates(restaurants)
+
+    for method in dedup.DUPLICATION_DETECTION_FUNCTIONS.keys():
+        print('Computing duplicates for ' + method + '... ', end='')
+        duplicates = dedup.duplicates_detection(method, restaurants)
+        actual_duplicates = get_actual_duplicates(restaurants)
+        print(actual_duplicates)
+
+        print('f_measure = ' + str(f_measure(duplicates, actual_duplicates)))
