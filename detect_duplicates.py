@@ -10,22 +10,56 @@ DATASET_FILE = 'restaurant_dataset.csv'
 
 
 def true_positives(duplicates, actual_duplicates):
-    return 1 # TODO
+    tp = []
+
+    for d in duplicates:
+        if (d[0], d[1]) in actual_duplicates:
+            tp.append(d)
+
+    return tp
 
 
 def false_negatives(duplicates, actual_duplicates):
-    return 1 # TODO
+    fn = []
+    for ad in actual_duplicates:
+        if (ad[0], ad[1]) not in duplicates:
+            fn.append(ad)
+
+    return fn
+
 
 def false_positives(duplicates, actual_duplicates):
-    return 1 # TODO
+    fp = []
+    for d in duplicates:
+        if (d[0], d[1]) not in actual_duplicates:
+            fp.append(d)
+
+    return fp
+
+
+def union(set1, set2):
+    result = []
+    for x in set1 + set2:
+        if x not in result:
+            result.append(x)
+
+    return result
 
 
 def recall(duplicates, actual_duplicates):
-    return 1 # TODO
+    tp = true_positives(duplicates, actual_duplicates)
+    fn = false_negatives(duplicates, actual_duplicates)
+
+    return len(tp) / len(union(tp, fn))
 
 
 def precision(duplicates, actual_duplicates):
-    return 1 # TODO
+    tp = true_positives(duplicates, actual_duplicates)
+    fp = false_positives(duplicates, actual_duplicates)
+
+    print(len(duplicates))
+    print(len(actual_duplicates))
+    return len(tp) / len(union(tp, fp))
 
 
 def f_measure(duplicates, actual_duplicates):
@@ -67,6 +101,5 @@ if __name__ == '__main__':
     for method in dedup.DUPLICATION_DETECTION_FUNCTIONS.keys():
         print('Computing duplicates for ' + method + '... ', end='')
         duplicates = dedup.duplicates_detection(method, restaurants)
-        print(actual_duplicates)
 
         print('f_measure = ' + str(f_measure(duplicates, actual_duplicates)))
