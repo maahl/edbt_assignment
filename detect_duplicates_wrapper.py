@@ -34,7 +34,7 @@ class _Duplicate(ctypes.Structure):
 # wrapper for classe duplicates_t
 class _Duplicates(ctypes.Structure):
     _fields_ = [
-        ('duplicates', ctypes.ARRAY(_Duplicate, 863)),
+        ('duplicates', ctypes.ARRAY(_Duplicate, 864)),
         ('num_duplicates', ctypes.c_int),
     ]
 

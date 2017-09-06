@@ -20,7 +20,7 @@ typedef struct duplicate_t {
 
 
 typedef struct duplicates_t {
-    duplicate_t duplicates[863];
+    duplicate_t duplicates[864];
     int num_duplicates;
 } duplicates_t;
 
@@ -42,8 +42,6 @@ duplicates_t naive_implementation(restaurant_t * restaurants, int num_restaurant
     }
 
     // generate a dummy list of duplicates
-    //duplicates_t * duplicates = malloc(sizeof(duplicates_t));
-    //duplicates->duplicates = malloc(sizeof(duplicate_t) * 863);
     duplicates_t duplicates;
     duplicates.num_duplicates = 0;
 
