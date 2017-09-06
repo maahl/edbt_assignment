@@ -3,14 +3,18 @@ import os
 
 
 # wrapper for struct restaurant_t
+
 class _Restaurant(ctypes.Structure):
-    _fields_ = [
-        ('name', ctypes.c_char * 256),
-        ('address', ctypes.c_char * 256),
-        ('city', ctypes.c_char * 256),
-        ('type', ctypes.c_char * 256),
-        ('id', ctypes.c_int),
-    ]
+    pass
+
+_Restaurant._fields_ = [
+    ('name', ctypes.c_char * 256),
+    ('address', ctypes.c_char * 256),
+    ('city', ctypes.c_char * 256),
+    ('type', ctypes.c_char * 256),
+    ('id', ctypes.c_int),
+    ('next', ctypes.POINTER(_Restaurant)),
+]
 
 # corresponding python class
 class Restaurant():
