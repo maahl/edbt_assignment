@@ -29,8 +29,8 @@ class Restaurant():
 # wrapper for struct duplicate_t
 class _Duplicate(ctypes.Structure):
     _fields_ = [
-        ('id', ctypes.c_int),
-        ('parent_id', ctypes.c_int),
+        ('original_id', ctypes.c_int),
+        ('dataset_index', ctypes.c_int),
     ]
 
 
@@ -81,6 +81,6 @@ def duplicates_detection(method, restaurants):
     duplicates = []
     for i in range(result.num_duplicates):
         d = result.duplicates[i]
-        duplicates.append((d.id, d.parent_id))
+        duplicates.append((d.original_id, d.dataset_index))
 
     return duplicates

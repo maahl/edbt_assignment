@@ -20,14 +20,13 @@ struct restaurant_t {
 };
 
 /**
- * id: The ID of the restaurant with duplicates in the csv file
- * num_duplicates: How many duplicates we've detected for this restaurant
- * index[]: Array of
+ * original_id: The ID of the restaurant this is a duplicate of
+ * By convention, the first restaurant encountered is the original one and the others are duplicates
+ * index: index of the duplicate in the dataset
 */
 typedef struct duplicate_t {
-    int id;
-    int num_duplicates;
-    int index[863]; // TODO: change to pointer and optimize with calloc's etc.
+    int original_id;
+    int dataset_index; // TODO: change to pointer and optimize with calloc's etc.
 } duplicate_t;
 
 /**
@@ -56,7 +55,6 @@ static void printRestaurant(restaurant_t restaurant){
  * of restaurants because we don't want to do it in Python
  */
 restaurant_t *initializeRestaurantList(restaurant_t *restaurants, int num_restaurants){
-
     restaurant_t *startRestaurant, *currentRestaurant, *nextRestaurant;
     startRestaurant = calloc(1, sizeof(restaurant_t));
     currentRestaurant = startRestaurant;
@@ -66,9 +64,9 @@ restaurant_t *initializeRestaurantList(restaurant_t *restaurants, int num_restau
         currentRestaurant->next = calloc(1, sizeof(restaurant_t));
         currentRestaurant = currentRestaurant->next;
     }
+
     currentRestaurant = startRestaurant;
     for (int j=0; j<num_restaurants; j++){
-        printRestaurant(*currentRestaurant);
         currentRestaurant = currentRestaurant->next;
     }
     return startRestaurant;
@@ -82,7 +80,6 @@ duplicates_t naive_implementation(restaurant_t * restaurants, int num_restaurant
     restaurant_t *currentRestaurant = restaurantList;
     // print the input
     for(int i=0; i<num_restaurants; i++) {
-        printRestaurant(*currentRestaurant);
         currentRestaurant = currentRestaurant->next;
     }
     duplicates_t duplicates;

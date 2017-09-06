@@ -3,6 +3,7 @@
 import csv
 import detect_duplicates_wrapper as dedup
 from detect_duplicates_wrapper import Restaurant
+import operator
 
 
 DATASET_FILE = 'restaurant_dataset.csv'
@@ -33,18 +34,17 @@ def f_measure(duplicates, actual_duplicates):
 
     return (2 * r * p) / (r + p)
 
-# TODO tmp function
 def get_actual_duplicates(restaurants):
     seen = []
     duplicates = []
-    for r in restaurants:
+    for i, r in enumerate(restaurants):
         if r.restaurant_id not in seen:
             seen.append(r.restaurant_id)
         else:
-            duplicates.append(r.restaurant_id)
+            duplicates.append((r.restaurant_id, i))
 
-    duplicates.sort()
-    return list(set(duplicates))
+    duplicates.sort(key = lambda x: x[0])
+    return duplicates
 
 
 if __name__ == '__main__':
@@ -62,12 +62,11 @@ if __name__ == '__main__':
             ))
 
     # start by computing the actual duplicates
-    #actual_duplicates = dedup.actual_duplicates(restaurants)
+    actual_duplicates = get_actual_duplicates(restaurants)
 
     for method in dedup.DUPLICATION_DETECTION_FUNCTIONS.keys():
         print('Computing duplicates for ' + method + '... ', end='')
         duplicates = dedup.duplicates_detection(method, restaurants)
-        actual_duplicates = get_actual_duplicates(restaurants)
         print(actual_duplicates)
 
         print('f_measure = ' + str(f_measure(duplicates, actual_duplicates)))
