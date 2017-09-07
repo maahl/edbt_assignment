@@ -188,29 +188,31 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restauran
 
     /* Testing with 3-grams */
     long n = 3;
+
     /* Counters to track the row number in the csv file */
     int currentRow = 0;
     int comparisonRow = 1;
     int duplicateCntr = 0;
+
     /* Initialize variables to hold duplicates */
     duplicates_t duplicates;
     duplicates.num_duplicates = 0;
+
     /* Let's go through the linked list ..*/
     currentRestaurant = restaurantList;
     restaurant_t *comparisonRestaurant = restaurantList->next;
-/*    while(currentRestaurant != NULL){
-        while (comparisonRestaurant != NULL) {*/
-    while(currentRow < 863){
-        while(comparisonRow < 863){
+
+    while(currentRow < 863) {
+        while(comparisonRow < 863) {
             long addressSim = compareNGrams(&currentRestaurant->address[0],
                     &comparisonRestaurant->address[0],
-                    3 /* size of n in ngrams */);
+                    n /* size of n in ngrams */);
             long citySim = compareNGrams(&currentRestaurant->city[0],
-                    &comparisonRestaurant->city[0], 3);
+                    &comparisonRestaurant->city[0], n);
             long nameSim = compareNGrams(&currentRestaurant->name[0],
-                    &comparisonRestaurant->name[0], 3);
+                    &comparisonRestaurant->name[0], n);
             long typeSim = compareNGrams(&currentRestaurant->type[0],
-                    &comparisonRestaurant->type[0], 3);
+                    &comparisonRestaurant->type[0], n);
 /*            fprintf(stderr, "addressSim %d %s %s\n "
                     "citySim %d %s %s\n "
                     "nameSim %d %s %s\n"
