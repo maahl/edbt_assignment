@@ -84,8 +84,6 @@ duplicates_t naive_implementation(restaurant_t * restaurants, int num_restaurant
     duplicates_t duplicates;
     duplicates.num_duplicates = 0;
 
-    int current_duplicate = 0;
-
     for(int i=0; i<num_restaurants; i++) {
         for(int j=i+1; j<num_restaurants; j++) {
             restaurant_t ri = restaurants[i];
@@ -97,9 +95,10 @@ duplicates_t naive_implementation(restaurant_t * restaurants, int num_restaurant
                 strcmp(ri.city, rj.city) == 0 &&
                 strcmp(ri.type, rj.type) == 0
               ) {
+                duplicates.duplicates[duplicates.num_duplicates].original_id = ri.id;
+                duplicates.duplicates[duplicates.num_duplicates].dataset_index = j;
                 duplicates.num_duplicates++;
-                duplicates.duplicates[current_duplicate].original_id = ri.id;
-                duplicates.duplicates[current_duplicate].dataset_index = j;
+                duplicates.num_duplicates++;
             }
         }
     }
