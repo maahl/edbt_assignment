@@ -240,15 +240,9 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restauran
                         "id %d index %d\n",
                         duplicates.duplicates[duplicates.num_duplicates].original_id,
                         duplicates.duplicates[duplicates.num_duplicates].dataset_index);
+
                 /* Set the id and object index in the duplicates array */
-                /* TODO: If an entry will appear more than twice this will cause currentRestaurant to be
-                 * recorded many times
-                 * Current test data doesn't violate this assumption.
-                 */
                 duplicates.duplicates[duplicates.num_duplicates].original_id = currentRestaurant->id;
-                duplicates.duplicates[duplicates.num_duplicates].dataset_index = currentRow;
-                duplicates.num_duplicates++;
-                duplicates.duplicates[duplicates.num_duplicates].original_id = comparisonRestaurant->id;
                 duplicates.duplicates[duplicates.num_duplicates].dataset_index = comparisonRow;
                 duplicates.num_duplicates++;
 //                duplicateCntr++;
