@@ -113,33 +113,24 @@ int compareNGrams(char * string1, char *string2, long n){
     /* If either string is smaller than the set size of n */
     long size1 = strlen(string1);
     long size2 = strlen(string2);
-    if (size1 < n || size2 < n){
+
+    if (size1 < n || size2 < n) {
         return 0; /* There are no similar n-grams */
     }
 
     float frequency = 0;
-    float totalComparisons = 0;
 
-    for(int i=0; i<size1; i+=3){
-        for(int j=0; j<size2; j+=3){
-            totalComparisons++;
-//            fprintf(stderr, "compareNGrams: memcmp %.*s and %.*s\n", 3, string1+i, 3, string2+j);
-            if(memcmp(string1+i, string2+j, 3) == 0){ /*they are equal*/
+    for(int i=0; i<size1; i+=3) {
+        for(int j=0; j<size2; j+=3) {
+            if(memcmp(string1+i, string2+j, 3) == 0) { /*they are equal*/
                 frequency++;
             }
         }
     }
+
     float similarity = frequency/(size1/n);
-/*    fprintf(stderr, "compareNGrams: ngrams found in %s and %s\n"
-            "frequency: %f\n"
-            "total comparisons: %f\n"
-            "Similarity: %f\n",
-            string1, string2, frequency, totalComparisons, similarity);*/
-    if((similarity) > 0.7){
-//        fprintf(stderr, "compareNGrams: Looks like %s and %s are very similar.. \n", string1, string2);
-        return 1;
-    }
-    return 0;
+
+    return similarity > 0.7;
 }
 
 static int duplicateIdCmp(const void *duplicate1, const void *duplicate2){
