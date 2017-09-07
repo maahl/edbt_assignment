@@ -108,12 +108,6 @@ duplicates_t naive_implementation(restaurant_t * restaurants, int num_restaurant
     return duplicates;
 }
 
-long updateN(char *string, long *n){
-    long candidateN = strlen(string);
-    if(candidateN > *n){
-        *n= candidateN;
-    }
-}
 
 int compareNGrams(char * string1, char *string2, long n){
     /* If either string is smaller than the set size of n */
@@ -171,20 +165,6 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restauran
 
     restaurant_t *restaurantList = initializeRestaurantList(restaurants, num_restaurants);
     restaurant_t *currentRestaurant = restaurantList;
-
-    long maxN = 0;
-    /* Find the maximum value for n,
-     * i.e., find the longest text string */
-    for(int i=0; i<num_restaurants; i++) {
-        for(int j=i+1; j<num_restaurants; j++) {
-            updateN(&currentRestaurant->address[0], &maxN);
-            updateN(&currentRestaurant->city[0], &maxN);
-            updateN(&currentRestaurant->name[0], &maxN);
-            updateN(&currentRestaurant->type[0], &maxN);
-        }
-    }
-    /* Print the maximum possible length of a string */
-    fprintf(stderr, "nGrams_implementation: maxN = %lu \n", maxN);
 
     /* Testing with 3-grams */
     long n = 3;
