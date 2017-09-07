@@ -158,12 +158,11 @@ static int duplicateIdCmp(const void *duplicate1, const void *duplicate2){
 
     fprintf(stderr, "duplicateIdCmp: comparing %d and %d\n", id1, id2);
 
-    if (id1 != id2){
-        if (id1<id2)
-            return -1;
-        if (id1>id2)
-            return 1;
-    }
+    if (id1<id2)
+        return -1;
+    if (id1>id2)
+        return 1;
+
     /* they are equal */
     return 0;
 }
