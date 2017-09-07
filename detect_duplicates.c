@@ -153,7 +153,6 @@ static int duplicateIdCmp(const void *duplicate1, const void *duplicate2){
 }
 
 duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restaurants) {
-
     restaurant_t *restaurantList = initializeRestaurantList(restaurants, num_restaurants);
     restaurant_t *currentRestaurant = restaurantList;
 
@@ -184,19 +183,6 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restauran
                     &comparisonRestaurant->name[0], n);
             long typeSim = compareNGrams(&currentRestaurant->type[0],
                     &comparisonRestaurant->type[0], n);
-/*            fprintf(stderr, "addressSim %d %s %s\n "
-                    "citySim %d %s %s\n "
-                    "nameSim %d %s %s\n"
-                    "typeSim %d %s %s\n", addressSim,
-                    &currentRestaurant->address[0],
-                    &comparisonRestaurant->address[0], citySim,
-                    &currentRestaurant->city[0], &comparisonRestaurant->city[0],
-                    nameSim, &currentRestaurant->name[0],
-                    &comparisonRestaurant->name[0], typeSim,
-                    &currentRestaurant->type[0],
-                    &comparisonRestaurant->type[0]);*/
-            fprintf(stderr, "index %d %d nact: %d %d %d %d \n",
-                    currentRow, comparisonRow, nameSim, addressSim, citySim, typeSim);
 
             /* temporarily hold a pointer to the current comparison restaurant */
             restaurant_t *tmpRestaurant = comparisonRestaurant;
@@ -236,6 +222,7 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restauran
                 duplicates.duplicates[k].dataset_index);
     }
 
+    printf("Found %d duplicates\n", duplicates.num_duplicates);
     return duplicates;
 }
 
