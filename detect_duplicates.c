@@ -260,7 +260,7 @@ float jaro_similarity(char s1[256], char s2[256]) {
 
 
 // resolve entity using jaro similarity
-// the distance between two restaurants is a weighted sum of the distances between each attribute
+// two restaurants are considered duplicates if the similarity of their fields exceeds a specified per-field threshold
 duplicates_t jaro_similarity_entity_resolution_with_coeffs(restaurant_t * restaurants, int num_restaurants, float name_similarity_threshold, float address_similarity_threshold, float city_similarity_threshold, float type_similarity_threshold) {
     duplicates_t duplicates;
     duplicates.num_duplicates = 0;
