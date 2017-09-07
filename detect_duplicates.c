@@ -26,7 +26,7 @@ struct restaurant_t {
 */
 typedef struct duplicate_t {
     int original_id;
-    int dataset_index; // TODO: change to pointer and optimize with calloc's etc.
+    int dataset_index;
 } duplicate_t;
 
 /**
@@ -73,25 +73,35 @@ restaurant_t *initializeRestaurantList(restaurant_t *restaurants, int num_restau
 }
 
 // From a list of restaurants, return the list of duplicates
+// Naive implementation: just compare the strings litterally
 duplicates_t naive_implementation(restaurant_t * restaurants, int num_restaurants) {
-    // TODO
-
     restaurant_t *restaurantList = initializeRestaurantList(restaurants, num_restaurants);
     restaurant_t *currentRestaurant = restaurantList;
-    // print the input
+
     for(int i=0; i<num_restaurants; i++) {
         currentRestaurant = currentRestaurant->next;
     }
     duplicates_t duplicates;
     duplicates.num_duplicates = 0;
 
-    for(int i=0; i<5; i++) {
-        duplicate_t duplicate;
-        duplicate.original_id = i * 2;
-        duplicate.dataset_index = i * 1;
+    int current_duplicate = 0;
 
-        duplicates.duplicates[i] = duplicate;
-        duplicates.num_duplicates++;
+    for(int i=0; i<num_restaurants; i++) {
+        for(int j=i+1; j<num_restaurants; j++) {
+            restaurant_t ri = restaurants[i];
+            restaurant_t rj = restaurants[j];
+
+            if(
+                strcmp(ri.name, rj.name) == 0 &&
+                strcmp(ri.address, rj.address) == 0 &&
+                strcmp(ri.city, rj.city) == 0 &&
+                strcmp(ri.type, rj.type) == 0
+              ) {
+                duplicates.num_duplicates++;
+                duplicates.duplicates[current_duplicate].original_id = ri.id;
+                duplicates.duplicates[current_duplicate].dataset_index = j;
+            }
+        }
     }
 
     return duplicates;
