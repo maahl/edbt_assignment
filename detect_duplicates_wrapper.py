@@ -48,6 +48,7 @@ _detect_duplicates = ctypes.CDLL(lib_path)
 
 DUPLICATION_DETECTION_FUNCTIONS = {
     'naive': _detect_duplicates.naive_implementation,
+    'ngrams': _detect_duplicates.ngrams_implementation,
 }
 
 for f in DUPLICATION_DETECTION_FUNCTIONS.values():
