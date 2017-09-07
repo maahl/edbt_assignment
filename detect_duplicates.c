@@ -164,10 +164,10 @@ duplicates_t jaro_similarity_entity_resolution(restaurant_t * restaurants, int n
     duplicates_t duplicates;
     duplicates.num_duplicates = 0;
 
-    float name_similarity_threshold = 0.9;
-    float address_similarity_threshold = 0.6;
-    float city_similarity_threshold = .95; // assume the city is most often correct
-    float type_similarity_threshold = 0.9;
+    float name_similarity_threshold = 0.8;
+    float address_similarity_threshold = 0.8;
+    float city_similarity_threshold = .8;
+    float type_similarity_threshold = 0.7;
 
     for(int i=0; i<num_restaurants; i++) {
         for(int j=i+1; j<num_restaurants; j++) {
