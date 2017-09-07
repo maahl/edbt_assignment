@@ -130,7 +130,7 @@ int compareNGrams(char * string1, char *string2, long n){
 
     float similarity = frequency/(size1/n);
 
-    return similarity > 0.7;
+    return similarity > 0.5;
 }
 
 static int duplicateIdCmp(const void *duplicate1, const void *duplicate2){
@@ -158,8 +158,8 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restauran
     long n = 3;
 
     /* Counters to track the row number in the csv file */
-    int currentRow = 0;
-    int comparisonRow = 1;
+    int currentRow = 1;
+    int comparisonRow = 2;
     int duplicateCntr = 0;
 
     /* Initialize variables to hold duplicates */
@@ -202,13 +202,6 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restauran
         comparisonRestaurant = currentRestaurant->next;
         comparisonRow = currentRow+1;
         currentRow++;
-    }
-
-    qsort(&duplicates.duplicates[0], duplicates.num_duplicates, sizeof(duplicate_t), duplicateIdCmp);
-    for(int k=0; k < duplicates.num_duplicates; k++){
-        fprintf(stderr,"nGrams_implementation: duplicates original_id %d index %d\n",
-                duplicates.duplicates[k].original_id,
-                duplicates.duplicates[k].dataset_index);
     }
 
     return duplicates;
