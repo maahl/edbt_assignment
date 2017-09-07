@@ -108,40 +108,32 @@ duplicates_t naive_implementation(restaurant_t * restaurants, int num_restaurant
     return duplicates;
 }
 
-long updateN(char *string, long *n) {
-    long candidateN = strlen(string);
-    if (candidateN > *n) {
-        *n = candidateN;
-    }
-}
 
-int compareNGrams(char * string1, char *string2, long n) {
+int compareNGrams(char * string1, char *string2, long n){
     /* If either string is smaller than the set size of n */
     long size1 = strlen(string1);
     long size2 = strlen(string2);
+
     if (size1 < n || size2 < n) {
         return 0; /* There are no similar n-grams */
     }
 
     float frequency = 0;
-    float totalComparisons = 0;
 
-    for (int i = 0; i < size1; i += 3) {
-        for (int j = 0; j < size2; j += 3) {
-            totalComparisons++;
-            if (memcmp(string1 + i, string2 + j, 3) == 0) { /*they are equal*/
+    for(int i=0; i<size1; i+=3) {
+        for(int j=0; j<size2; j+=3) {
+            if(memcmp(string1+i, string2+j, 3) == 0) { /*they are equal*/
                 frequency++;
             }
         }
     }
-    float similarity = frequency / (size1 / n);
-    if ((similarity) > 0.7) {
-        return 1;
-    }
-    return 0;
+
+    float similarity = frequency/(size1/n);
+
+    return similarity > 0.7;
 }
 
-static int duplicateIdCmp(const void *duplicate1, const void *duplicate2) {
+static int duplicateIdCmp(const void *duplicate1, const void *duplicate2){
 
     duplicate_t *d1 = (duplicate_t *) duplicate1;
     duplicate_t *d2 = (duplicate_t *) duplicate2;
@@ -149,40 +141,25 @@ static int duplicateIdCmp(const void *duplicate1, const void *duplicate2) {
     int id1 = d1->original_id;
     int id2 = d2->original_id;
 
-    if (id1 < id2)
+    if (id1<id2)
         return -1;
-    if (id1 > id2)
+    if (id1>id2)
         return 1;
 
     /* they are equal */
     return 0;
 }
 
-duplicates_t ngrams_implementation(restaurant_t * restaurants,
-        int num_restaurants) {
-
-    restaurant_t *restaurantList = initializeRestaurantList(restaurants,
-            num_restaurants);
+duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restaurants) {
+    restaurant_t *restaurantList = initializeRestaurantList(restaurants, num_restaurants);
     restaurant_t *currentRestaurant = restaurantList;
-
-    long maxN = 0;
-    /* Find the maximum value for n,
-     * i.e., find the longest text string */
-    for (int i = 0; i < num_restaurants; i++) {
-        for (int j = i + 1; j < num_restaurants; j++) {
-            updateN(&currentRestaurant->address[0], &maxN);
-            updateN(&currentRestaurant->city[0], &maxN);
-            updateN(&currentRestaurant->name[0], &maxN);
-            updateN(&currentRestaurant->type[0], &maxN);
-        }
-    }
 
     /* Testing with 3-grams */
     long n = 3;
 
     /* Counters to track the row number in the csv file */
-    int currentRow = 1;
-    int comparisonRow = 2;
+    int currentRow = 0;
+    int comparisonRow = 1;
     int duplicateCntr = 0;
 
     /* Initialize variables to hold duplicates */
@@ -193,8 +170,8 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants,
     currentRestaurant = restaurantList;
     restaurant_t *comparisonRestaurant = restaurantList->next;
 
-    while (currentRow < 863) {
-        while (comparisonRow < 863) {
+    while(currentRow < 863) {
+        while(comparisonRow < 863) {
             long addressSim = compareNGrams(&currentRestaurant->address[0],
                     &comparisonRestaurant->address[0],
                     n /* size of n in ngrams */);
@@ -211,33 +188,28 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants,
             comparisonRestaurant = comparisonRestaurant->next;
             /* If we are above the threshold for similarity */
             if ((addressSim + citySim + nameSim + typeSim) > 3) {
-
                 /* Set the id and object index in the duplicates array */
-                duplicates.duplicates[duplicates.num_duplicates].original_id =
-                        currentRestaurant->id;
-                duplicates.duplicates[duplicates.num_duplicates].dataset_index =
-                        comparisonRow;
+                duplicates.duplicates[duplicates.num_duplicates].original_id = currentRestaurant->id;
+                duplicates.duplicates[duplicates.num_duplicates].dataset_index = comparisonRow;
                 duplicates.num_duplicates++;
 
                 /* free the detected duplicate - no need to compare it with anything again */
-//                free(tmpRestaurant);
+                free(tmpRestaurant);
             }
             comparisonRow++;
         }
         currentRestaurant = currentRestaurant->next;
         comparisonRestaurant = currentRestaurant->next;
-        comparisonRow = currentRow + 1;
+        comparisonRow = currentRow+1;
         currentRow++;
     }
 
-//    qsort(&duplicates.duplicates[0], duplicates.num_duplicates,
-//            sizeof(duplicate_t), duplicateIdCmp);
-//    for (int k = 0; k < duplicates.num_duplicates; k++) {
-//        fprintf(stderr,
-//                "nGrams_implementation: duplicates original_id %d index %d\n",
-//                duplicates.duplicates[k].original_id,
-//                duplicates.duplicates[k].dataset_index);
-//    }
+    qsort(&duplicates.duplicates[0], duplicates.num_duplicates, sizeof(duplicate_t), duplicateIdCmp);
+    for(int k=0; k < duplicates.num_duplicates; k++){
+        fprintf(stderr,"nGrams_implementation: duplicates original_id %d index %d\n",
+                duplicates.duplicates[k].original_id,
+                duplicates.duplicates[k].dataset_index);
+    }
 
     return duplicates;
 }
@@ -323,6 +295,7 @@ duplicates_t jaro_similarity_entity_resolution_with_coeffs(restaurant_t * restau
             }
         }
     }
+
     return duplicates;
 }
 
