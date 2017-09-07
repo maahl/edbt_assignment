@@ -4,6 +4,7 @@ import csv
 import detect_duplicates_wrapper as dedup
 from detect_duplicates_wrapper import Restaurant
 import operator
+import sys
 
 
 DATASET_FILE = 'restaurant_dataset.csv'
@@ -98,7 +99,9 @@ if __name__ == '__main__':
     actual_duplicates = get_actual_duplicates(restaurants)
 
     for method in dedup.DUPLICATION_DETECTION_FUNCTIONS.keys():
-        print('Computing duplicates for ' + method + '... ', end='')
+        print('Computing duplicates for ' + method + '... ')
         duplicates = dedup.duplicates_detection(method, restaurants)
 
-        print('f_measure = ' + str(f_measure(duplicates, actual_duplicates)))
+        print('    precision = ', precision(duplicates, actual_duplicates))
+        print('    recall = ', recall(duplicates, actual_duplicates))
+        print('    f_measure = ', f_measure(duplicates, actual_duplicates))
