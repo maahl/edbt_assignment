@@ -141,8 +141,6 @@ static int duplicateIdCmp(const void *duplicate1, const void *duplicate2){
     int id1 = d1->original_id;
     int id2 = d2->original_id;
 
-    fprintf(stderr, "duplicateIdCmp: comparing %d and %d\n", id1, id2);
-
     if (id1<id2)
         return -1;
     if (id1>id2)
@@ -190,19 +188,10 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restauran
             comparisonRestaurant = comparisonRestaurant->next;
             /* If we are above the threshold for similarity */
             if ((addressSim + citySim + nameSim + typeSim) > 3) {
-                fprintf(stderr,
-                        "nGrams_implementation: index %d has duplicates\n",
-                        currentRestaurant->id);
-                fprintf(stderr, "nGrams_implementation: Checking duplicates array..\n"
-                        "id %d index %d\n",
-                        duplicates.duplicates[duplicates.num_duplicates].original_id,
-                        duplicates.duplicates[duplicates.num_duplicates].dataset_index);
-
                 /* Set the id and object index in the duplicates array */
                 duplicates.duplicates[duplicates.num_duplicates].original_id = currentRestaurant->id;
                 duplicates.duplicates[duplicates.num_duplicates].dataset_index = comparisonRow;
                 duplicates.num_duplicates++;
-//                duplicateCntr++;
 
                 /* free the detected duplicate - no need to compare it with anything again */
                 free(tmpRestaurant);
