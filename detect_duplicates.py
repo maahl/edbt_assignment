@@ -3,6 +3,7 @@
 import csv
 import detect_duplicates_wrapper as dedup
 from detect_duplicates_wrapper import Restaurant
+import numpy as np
 import operator
 import sys
 
@@ -56,6 +57,9 @@ def recall(duplicates, actual_duplicates):
 def precision(duplicates, actual_duplicates):
     tp = true_positives(duplicates, actual_duplicates)
 
+    if len(duplicates) == 0:
+        return 0
+
     return len(tp) / len(duplicates)
 
 
@@ -79,6 +83,37 @@ def get_actual_duplicates(restaurants):
 
     duplicates.sort(key = lambda x: x[0])
     return duplicates
+
+
+def optimize_jaro(actual_duplicates):
+    # optimize coefficients for jaro
+    max_f_measure = 0
+    best_coeffs = [] # expects tuples like (f_measure, name, address, city, type) thresholds
+    for name_similarity_threshold in np.arange(.93, .97, .02):
+        for address_similarity_threshold in np.arange(.5, .60, .02):
+            for city_similarity_threshold in np.arange(.75, .8, .02):
+                for type_similarity_threshold in [0]:
+                    duplicates = dedup.jaro_coeffs(restaurants, name_similarity_threshold, address_similarity_threshold, city_similarity_threshold, type_similarity_threshold)
+                    f = f_measure(duplicates, actual_duplicates)
+                    if f > max_f_measure:
+                        max_f_measure = f
+                        best_coeffs.append((f, name_similarity_threshold, address_similarity_threshold, city_similarity_threshold, type_similarity_threshold))
+                        p = precision(duplicates, actual_duplicates)
+                        r = recall(duplicates, actual_duplicates)
+                        print()
+                        print('Found f_measure = ', f, ', precision = ', p,  ', recall = ', r, ' for these coefficients:')
+                        print('    name_similarity_threshold: ', name_similarity_threshold)
+                        print('    address_similarity_threshold: ', address_similarity_threshold)
+                        print('    city_similarity_threshold: ', city_similarity_threshold)
+                        print('    type_similarity_threshold: ', type_similarity_threshold)
+                    else:
+                        print('.', end='')
+                        sys.stdout.flush()
+
+    print()
+    best_coeffs.sort(key= lambda x: x[0], reverse=True)
+    #for x in best_coeffs:
+    #    print(x)
 
 
 if __name__ == '__main__':
@@ -105,3 +140,5 @@ if __name__ == '__main__':
         print('    precision = ', precision(duplicates, actual_duplicates))
         print('    recall = ', recall(duplicates, actual_duplicates))
         print('    f_measure = ', f_measure(duplicates, actual_duplicates))
+
+    #optimize_jaro(actual_duplicates)

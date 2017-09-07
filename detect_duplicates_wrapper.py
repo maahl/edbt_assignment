@@ -58,6 +58,45 @@ for f in DUPLICATION_DETECTION_FUNCTIONS.values():
     ]
     f.restype = _Duplicates
 
+jaro_coeffs_fn = _detect_duplicates.jaro_similarity_entity_resolution_with_coeffs
+jaro_coeffs_fn.argtypes = [
+    ctypes.POINTER(_Restaurant),
+    ctypes.c_int,
+    ctypes.c_float,
+    ctypes.c_float,
+    ctypes.c_float,
+    ctypes.c_float,
+]
+jaro_coeffs_fn.restype = _Duplicates
+def jaro_coeffs(restaurants, name_similarity_threshold, address_similarity_threshold, city_similarity_threshold, type_similarity_threshold):
+    restaurants_array = (_Restaurant * len(restaurants))()
+    for i in range(len(restaurants)):
+        r = restaurants[i]
+        restaurants_array[i] = _Restaurant(
+            r.name.encode(),
+            r.address.encode(),
+            r.city.encode(),
+            r.restaurant_type.encode(),
+            r.restaurant_id,
+        )
+
+    result = jaro_coeffs_fn(
+        ctypes.cast(restaurants_array, ctypes.POINTER(_Restaurant)),
+        ctypes.c_int(len(restaurants)),
+        ctypes.c_float(name_similarity_threshold),
+        ctypes.c_float(address_similarity_threshold),
+        ctypes.c_float(city_similarity_threshold),
+        ctypes.c_float(type_similarity_threshold)
+    )
+
+    duplicates = []
+    for i in range(result.num_duplicates):
+        d = result.duplicates[i]
+        duplicates.append((d.original_id, d.dataset_index))
+
+    return duplicates
+
+
 
 def duplicates_detection(method, restaurants):
     '''
