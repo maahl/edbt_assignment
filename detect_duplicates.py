@@ -48,23 +48,22 @@ def union(set1, set2):
 
 def recall(duplicates, actual_duplicates):
     tp = true_positives(duplicates, actual_duplicates)
-    fn = false_negatives(duplicates, actual_duplicates)
 
-    return len(tp) / len(union(tp, fn))
+    return len(tp) / len(actual_duplicates)
 
 
 def precision(duplicates, actual_duplicates):
     tp = true_positives(duplicates, actual_duplicates)
-    fp = false_positives(duplicates, actual_duplicates)
 
-    print(len(duplicates))
-    print(len(actual_duplicates))
-    return len(tp) / len(union(tp, fp))
+    return len(tp) / len(duplicates)
 
 
 def f_measure(duplicates, actual_duplicates):
     r = recall(duplicates, actual_duplicates)
     p = precision(duplicates, actual_duplicates)
+
+    if r + p == 0:
+        return 0
 
     return (2 * r * p) / (r + p)
 
@@ -103,3 +102,18 @@ if __name__ == '__main__':
         duplicates = dedup.duplicates_detection(method, restaurants)
 
         print('f_measure = ' + str(f_measure(duplicates, actual_duplicates)))
+
+    # test that precision, recall and f-measure return the correct values
+    # check result here: http://www.dcode.fr/precision-recall
+    print('precision = ', precision(
+        [('a', 0), ('e', 0), ('i', 0), ('o', 0), ('u', 0), ('y', 0)],
+        [('a', 0), ('b', 0), ('c', 0), ('d', 0), ('e', 0), ('f', 0), ('g', 0), ('h', 0), ('i', 0), ('j', 0)]
+    ))
+    print('recall = ', recall(
+        [('a', 0), ('e', 0), ('i', 0), ('o', 0), ('u', 0), ('y', 0)],
+        [('a', 0), ('b', 0), ('c', 0), ('d', 0), ('e', 0), ('f', 0), ('g', 0), ('h', 0), ('i', 0), ('j', 0)]
+    ))
+    print('f_measure = ', f_measure(
+        [('a', 0), ('e', 0), ('i', 0), ('o', 0), ('u', 0), ('y', 0)],
+        [('a', 0), ('b', 0), ('c', 0), ('d', 0), ('e', 0), ('f', 0), ('g', 0), ('h', 0), ('i', 0), ('j', 0)]
+    ))

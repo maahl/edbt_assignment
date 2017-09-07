@@ -83,6 +83,17 @@ duplicates_t naive_implementation(restaurant_t * restaurants, int num_restaurant
         currentRestaurant = currentRestaurant->next;
     }
     duplicates_t duplicates;
+    duplicates.num_duplicates = 0;
+
+    for(int i=0; i<5; i++) {
+        duplicate_t duplicate;
+        duplicate.original_id = i * 2;
+        duplicate.dataset_index = i * 1;
+
+        duplicates.duplicates[i] = duplicate;
+        duplicates.num_duplicates++;
+    }
+
     return duplicates;
 }
 
