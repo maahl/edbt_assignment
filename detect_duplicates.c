@@ -120,9 +120,9 @@ int compareNGrams(char * string1, char *string2, long n){
 
     float frequency = 0;
 
-    for(int i=0; i<size1; i+=3) {
-        for(int j=0; j<size2; j+=3) {
-            if(memcmp(string1+i, string2+j, 3) == 0) { /*they are equal*/
+    for(int i=0; i<size1 - n; i+=1) {
+        for(int j=0; j<size2 - n; j+=1) {
+            if(strncmp(string1+i, string2+j, n) == 0) { /*they are equal*/
                 frequency++;
             }
         }
@@ -194,7 +194,7 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restauran
                 duplicates.num_duplicates++;
 
                 /* free the detected duplicate - no need to compare it with anything again */
-                free(tmpRestaurant);
+                //free(tmpRestaurant);
             }
             comparisonRow++;
         }
