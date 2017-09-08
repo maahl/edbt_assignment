@@ -124,10 +124,10 @@ if __name__ == '__main__':
         csv_reader = csv.reader(dataset, delimiter=';')
         for restaurant in csv_reader:
             restaurants.append(Restaurant(
-                restaurant[0], # name
-                restaurant[1], # address
-                restaurant[2], # city
-                restaurant[3], # type
+                restaurant[0].strip().lower(), # name
+                restaurant[1].strip().lower(), # address
+                restaurant[2].strip().lower(), # city
+                restaurant[3].strip().lower(), # type
                 int(restaurant[4][1:-1]), # id, removing the quotes
             ))
 
