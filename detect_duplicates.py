@@ -6,6 +6,7 @@ from detect_duplicates_wrapper import Restaurant
 import numpy as np
 import operator
 import sys
+import time
 
 
 DATASET_FILE = 'restaurant_dataset.csv'
@@ -135,8 +136,11 @@ if __name__ == '__main__':
 
     for method in dedup.DUPLICATION_DETECTION_FUNCTIONS.keys():
         print('Computing duplicates for ' + method + '... ')
+        start_time = time.time()
         duplicates = dedup.duplicates_detection(method, restaurants)
+        execution_time = time.time() - start_time
 
+        print('    execution time = ', execution_time, ' seconds')
         print('    precision = ', precision(duplicates, actual_duplicates))
         print('    recall = ', recall(duplicates, actual_duplicates))
         print('    f_measure = ', f_measure(duplicates, actual_duplicates))
