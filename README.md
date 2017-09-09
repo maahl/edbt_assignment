@@ -58,4 +58,15 @@ the high similarity threshold that we set for the restaurant's name.
 
 ### n-grams similarity
 
-# TODO
+Please note that the n-grams implementation is still under development and the precision, recall, and f-measure will continue to change over the next days.
+
+Basically, given two strings (string1 and string2), the strings are split up into grams of size n.
+e.g., "andreas" results in the grams "and" "ndr" "dre" "rea" and "eas"
+
+If over half the grams in the two strings are exact matches we claim that the two strings match.
+Note: threshold subject to change.
+
+If three fields (name, address, city, type) of the four match, then the two restaurants are declared duplicate.
+
+If a string has a length less than the set n (e.g., n=4, but the string is "mic"), then the implementation returns a negative comparison by default.
+
