@@ -67,11 +67,6 @@ restaurant_t *initializeRestaurantList(restaurant_t *restaurants, int num_restau
         } else
             currentRestaurant->next = NULL;
     }
-
-    currentRestaurant = startRestaurant;
-    for (int j=0; j<num_restaurants; j++){
-        currentRestaurant = currentRestaurant->next;
-    }
     return startRestaurant;
 }
 
@@ -160,7 +155,6 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restauran
     /* Counters to track the row number in the csv file */
     int currentRow = 1;
     int comparisonRow = 2;
-    int duplicateCntr = 0;
 
     /* Initialize variables to hold duplicates */
     duplicates_t duplicates;
@@ -168,10 +162,14 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restauran
 
     /* Let's go through the linked list ..*/
     currentRestaurant = restaurantList;
+    restaurant_t *previousRestaurant = currentRestaurant;
     restaurant_t *comparisonRestaurant = restaurantList->next;
 
-    while(currentRow < 863) {
-        while(comparisonRow < 863) {
+    while(currentRestaurant!=NULL) {
+        while(comparisonRestaurant!=NULL) {
+/*            fprintf(stderr, "Comparing %d - %s and %d - %s \n", currentRow,
+                    currentRestaurant->name, comparisonRow,
+                    comparisonRestaurant->name);*/
             long addressSim = compareNGrams(&currentRestaurant->address[0],
                     &comparisonRestaurant->address[0],
                     n /* size of n in ngrams */);
@@ -188,21 +186,40 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restauran
             comparisonRestaurant = comparisonRestaurant->next;
             /* If we are above the threshold for similarity */
             if ((addressSim + citySim + nameSim + typeSim) > 3) {
+                fprintf(stderr, "ngrams: duplicate detected %d\n", currentRestaurant->id);
                 /* Set the id and object index in the duplicates array */
                 duplicates.duplicates[duplicates.num_duplicates].original_id = currentRestaurant->id;
                 duplicates.duplicates[duplicates.num_duplicates].dataset_index = comparisonRow;
                 duplicates.num_duplicates++;
 
                 /* free the detected duplicate - no need to compare it with anything again */
-                //free(tmpRestaurant);
-            }
+                /* If the list is A->B->C and we're freein'g B, let A point to C (A->C) */
+                previousRestaurant->next = comparisonRestaurant;
+                free(tmpRestaurant);
+            } else
+                previousRestaurant = tmpRestaurant;
             comparisonRow++;
         }
-        currentRestaurant = currentRestaurant->next;
-        comparisonRestaurant = currentRestaurant->next;
-        comparisonRow = currentRow+1;
-        currentRow++;
+        if(currentRestaurant->next == NULL)
+            break;
+        else {
+            currentRestaurant = currentRestaurant->next;
+            comparisonRestaurant = currentRestaurant->next;
+            currentRow++;
+            comparisonRow = currentRow + 1;
+        }
+
     }
+
+/*    qsort(&duplicates.duplicates[0], duplicates.num_duplicates,
+            sizeof(duplicate_t), duplicateIdCmp);
+    for (int k = 0; k < duplicates.num_duplicates; k++) {
+        fprintf(stderr,
+                "nGrams_implementation: duplicates original_id %d index %d\n",
+                duplicates.duplicates[k].original_id,
+                duplicates.duplicates[k].dataset_index);
+
+    }*/
 
     return duplicates;
 }
