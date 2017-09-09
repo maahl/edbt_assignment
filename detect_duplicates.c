@@ -5,6 +5,7 @@
 
 
 #define DATASET_SIZE 864
+#define STRING_SIZE 256
 
 
 typedef struct restaurant_t restaurant_t;
@@ -14,10 +15,10 @@ typedef struct restaurant_t restaurant_t;
  * Struct to hold each restaurant
  */
 struct restaurant_t {
-    char name[256];
-    char address[256];
-    char city[256];
-    char type[256];
+    char name[STRING_SIZE];
+    char address[STRING_SIZE];
+    char city[STRING_SIZE];
+    char type[STRING_SIZE];
     int id;
     restaurant_t *next; /* pointer to next restaurant in linked list */
 };
@@ -232,13 +233,13 @@ float min(float x, float y) { return x < y ? x : y; }
 
 
 // https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance
-float jaro_similarity(char s1[256], char s2[256]) {
+float jaro_similarity(char s1[STRING_SIZE], char s2[STRING_SIZE]) {
     float l1 = strlen(s1);
     float l2 = strlen(s2);
 
-    char s1_common[256];
+    char s1_common[STRING_SIZE];
     int s1_common_len = 0;
-    char s2_common[256];
+    char s2_common[STRING_SIZE];
     int s2_common_len = 0;
 
     float max_distance = .5 * max(l1, l2) - 1;
