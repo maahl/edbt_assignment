@@ -98,6 +98,46 @@ def jaro_coeffs(restaurants, name_similarity_threshold, address_similarity_thres
     return duplicates
 
 
+ngrams_coeffs_fn = _detect_duplicates.ngrams_implementation_with_coeffs
+ngrams_coeffs_fn.argtypes = [
+    ctypes.POINTER(_Restaurant),
+    ctypes.c_int,
+    ctypes.c_int,
+    ctypes.c_float,
+    ctypes.c_float,
+    ctypes.c_float,
+    ctypes.c_float,
+]
+ngrams_coeffs_fn.restype = _Duplicates
+def ngrams_coeffs(restaurants, name_similarity_threshold, ngrams_length, address_similarity_threshold, city_similarity_threshold, type_similarity_threshold):
+    restaurants_array = (_Restaurant * len(restaurants))()
+    for i in range(len(restaurants)):
+        r = restaurants[i]
+        restaurants_array[i] = _Restaurant(
+            r.name.encode(),
+            r.address.encode(),
+            r.city.encode(),
+            r.restaurant_type.encode(),
+            r.restaurant_id,
+        )
+
+    result = ngrams_coeffs_fn(
+        ctypes.cast(restaurants_array, ctypes.POINTER(_Restaurant)),
+        ctypes.c_int(len(restaurants)),
+        ctypes.c_int(ngrams_length),
+        ctypes.c_float(name_similarity_threshold),
+        ctypes.c_float(address_similarity_threshold),
+        ctypes.c_float(city_similarity_threshold),
+        ctypes.c_float(type_similarity_threshold)
+    )
+
+    duplicates = []
+    for i in range(result.num_duplicates):
+        d = result.duplicates[i]
+        duplicates.append((d.original_id, d.dataset_index))
+
+    return duplicates
+
 
 def duplicates_detection(method, restaurants):
     '''

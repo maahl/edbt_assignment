@@ -173,12 +173,9 @@ static int duplicateIdCmp(const void *duplicate1, const void *duplicate2){
     return 0;
 }
 
-duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restaurants) {
+duplicates_t ngrams_implementation_with_coeffs(restaurant_t * restaurants, int num_restaurants, int ngrams_length, float name_similarity_threshold, float address_similarity_threshold, float city_similarity_threshold, float type_similarity_threshold) {
     duplicates_t duplicates;
     duplicates.num_duplicates = 0;
-
-    // size of the n-grams
-    int n = 3;
 
     for(int i=0; i<num_restaurants; i++) {
         for(int j=i+1; j<num_restaurants; j++) {
@@ -186,16 +183,16 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restauran
             restaurant_t rj = restaurants[j];
 
             // compute individual similarity for each field
-            float name_sim = compareNGrams(ri.name, rj.name, n);
-            float address_sim = compareNGrams(ri.address, rj.address, n);
-            float city_sim = compareNGrams(ri.city, rj.city, n);
-            float type_sim = compareNGrams(ri.type, rj.type, n);
+            float name_sim = compareNGrams(ri.name, rj.name, ngrams_length);
+            float address_sim = compareNGrams(ri.address, rj.address, ngrams_length);
+            float city_sim = compareNGrams(ri.city, rj.city, ngrams_length);
+            float type_sim = compareNGrams(ri.type, rj.type, ngrams_length);
 
             if(
-                name_sim >= .95 &&
-                address_sim >= .54 &&
-                city_sim >= .77 &&
-                type_sim >= 0
+                name_sim >= name_similarity_threshold &&
+                address_sim >= address_similarity_threshold &&
+                city_sim >= city_similarity_threshold &&
+                type_sim >= type_similarity_threshold
             )  {
                 duplicates.duplicates[duplicates.num_duplicates].original_id = ri.id;
                 duplicates.duplicates[duplicates.num_duplicates].dataset_index = j;
@@ -205,6 +202,11 @@ duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restauran
     }
 
     return duplicates;
+}
+
+
+duplicates_t ngrams_implementation(restaurant_t * restaurants, int num_restaurants) {
+    return ngrams_implementation_with_coeffs(restaurants, num_restaurants, 3, .95, .54, .77, 0);
 }
 
 float max(float x, float y) { return x > y ? x : y; }

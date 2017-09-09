@@ -117,6 +117,39 @@ def optimize_jaro(actual_duplicates):
     #    print(x)
 
 
+def optimize_ngrams(actual_duplicates):
+    # optimize coefficients for ngrams
+    max_f_measure = 0
+    best_coeffs = [] # expects tuples like (f_measure, name, address, city, type) thresholds
+    for name_similarity_threshold in np.arange(0, 1, .1):
+        for address_similarity_threshold in np.arange(0, 1, .1):
+            for city_similarity_threshold in np.arange(0, 1, .1):
+                for type_similarity_threshold in np.arange(0, 1, .1):
+                    for ngrams_length in range(2, 10):
+                        duplicates = dedup.jaro_coeffs(restaurants, name_similarity_threshold, address_similarity_threshold, city_similarity_threshold, type_similarity_threshold)
+                        f = f_measure(duplicates, actual_duplicates)
+                        if f > max_f_measure:
+                            max_f_measure = f
+                            best_coeffs.append((f, name_similarity_threshold, address_similarity_threshold, city_similarity_threshold, type_similarity_threshold, ngrams_length))
+                            p = precision(duplicates, actual_duplicates)
+                            r = recall(duplicates, actual_duplicates)
+                            print()
+                            print('Found f_measure = ', f, ', precision = ', p,  ', recall = ', r, ' for these coefficients:')
+                            print('    name_similarity_threshold: ', name_similarity_threshold)
+                            print('    address_similarity_threshold: ', address_similarity_threshold)
+                            print('    city_similarity_threshold: ', city_similarity_threshold)
+                            print('    type_similarity_threshold: ', type_similarity_threshold)
+                            print('    ngrams_length: ', ngrams_length)
+                        else:
+                            print('.', end='')
+                            sys.stdout.flush()
+
+    print()
+    best_coeffs.sort(key= lambda x: x[0], reverse=True)
+    for x in best_coeffs:
+        print(x)
+
+
 if __name__ == '__main__':
     restaurants = []
 
@@ -146,3 +179,4 @@ if __name__ == '__main__':
         print('    f_measure = ', f_measure(duplicates, actual_duplicates))
 
     #optimize_jaro(actual_duplicates)
+    optimize_ngrams(actual_duplicates)
