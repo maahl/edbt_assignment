@@ -4,6 +4,9 @@
 #include <string.h>
 
 
+#define DATASET_SIZE 864
+
+
 typedef struct restaurant_t restaurant_t;
 
 /**
@@ -35,7 +38,7 @@ typedef struct duplicate_t {
  * num_duplicates: Total number of duplicates found.
  */
 typedef struct duplicates_t {
-    duplicate_t duplicates[864];
+    duplicate_t duplicates[DATASET_SIZE];
     int num_duplicates;
 } duplicates_t;
 
